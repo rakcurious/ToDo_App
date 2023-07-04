@@ -1,31 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import delpic from "./assets/delete.svg";
 import thumbnail from "./assets/todomain.png";
 
+const storedTaskList = JSON.parse(localStorage.getItem("taskList")) || [];
+const storedCheck = JSON.parse(localStorage.getItem("check")) || [];
+
 function ToDo() {
   const [task, setTask] = useState("");
-  const [taskList, setTaskList] = useState([]);
-  const [check, setCheck] = useState([]);
-  const [counter, setCounter] = useState(0);
+  const [taskList, setTaskList] = useState(storedTaskList);
+  const [check, setCheck] = useState(storedCheck);
+  const [counter, setCounter] = useState(taskList.length);
+
+  function addTask() {
+    if (task.trim() === "") {
+      return;
+    }
+    const newTask = { id: counter, text: task };
+    const newTaskList = [newTask, ...taskList];
+    setTaskList(newTaskList);
+    localStorage.setItem("taskList", JSON.stringify(newTaskList));
+    const newCheck = [false, ...check];
+    setCheck(newCheck);
+    localStorage.setItem("check", JSON.stringify(newCheck));
+    setTask("");
+    setCounter((n) => n + 1);
+  }
+
+  function del(index) {
+    let removeItem = [...taskList];
+    let removeCheck = [...check];
+    removeItem.splice(index, 1);
+    removeCheck.splice(index, 1);
+    setTaskList(removeItem);
+    localStorage.setItem("taskList", JSON.stringify(removeItem));
+    setCheck(removeCheck);
+    localStorage.setItem("check", JSON.stringify(removeCheck));
+  }
 
   function handleChange({ target }) {
     setTask(target.value);
   }
 
-  function addTask() {
-    if(task.trim() === "") {return;}
-    const newTask = { id: counter, text: task };
-    setTaskList((arr) => [newTask, ...arr]);
-    setCheck((arr) => [false, ...arr]);
-    setTask("");
-    setCounter((n) => n + 1);
-  }
+  
 
   function changeCheck(index) {
     const ar = [...check];
     ar[index] = !ar[index];
     setCheck(ar);
+    localStorage.setItem("check", JSON.stringify(ar));
   }
+  
 
   function checkmeow(check) {
     let bhow = [...check];
@@ -37,14 +61,7 @@ function ToDo() {
     return "meow1";
   }
 
-  function del(index) {
-    let removeItem = [...taskList];
-    let removeCheck = [...check];
-    removeItem.splice(index, 1);
-    removeCheck.splice(index, 1);
-    setTaskList(removeItem);
-    setCheck(removeCheck);
-  }
+  
 
   return (
     <div>
@@ -74,10 +91,12 @@ function ToDo() {
         {taskList.map((todo, index) => (
           <div key={todo.id} className="my-4 mx-2 flex justify-center">
             <input
-              type="checkbox"
-              onClick={() => changeCheck(index)}
-              className={checkmeow(check)}
-            />
+  type="checkbox"
+  onClick={() => changeCheck(index)}
+  className={checkmeow(check)}
+  checked={check[index]}
+/>
+
             <div
               key={todo.id}
               className={check[index] === true ? "bar line-through" : "bar "}
