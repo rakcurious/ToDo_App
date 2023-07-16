@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import delpic from "./assets/delete.svg";
-import thumbnail from "./assets/todomain.png";
 
 const storedTaskList = JSON.parse(localStorage.getItem("taskList")) || [];
 const storedCheck = JSON.parse(localStorage.getItem("check")) || [];
@@ -68,7 +67,6 @@ function ToDo() {
       <p className="text-4xl font-quicksand font-bold text-center text-purple-400 m-10">
         Task manager
       </p>
-      <img className="h-0 w-0 hidden" src={thumbnail} />
 
       <div className="m-10 mx-2 flex justify-center">
         <input
